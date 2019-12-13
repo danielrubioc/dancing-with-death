@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+ 
+
+// SPA
+Route::get('/{any?}', 'SinglePageController@index')->name('home');
