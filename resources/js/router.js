@@ -15,8 +15,9 @@ export const router = new VueRouter({
         {   path: '/appointments', 
             component: appointment, 
             name: 'appointment',
+            props: (route) => ({ page: route.query.page }),
         },
-        {   path: '/appointments/update/:id', 
+        {   path: '/appointments/view/:id', 
             component: appointmentUpdate, 
             name: 'appointmentUpdate', 
         },
@@ -25,10 +26,9 @@ export const router = new VueRouter({
             name: 'appointmentCreate', 
         },
         {   path: '/', 
-            component: appointment, 
-            name: 'appointmentindex', 
+            component: appointmentCreate, 
+            name: 'appointmentIndex', 
         },
- 
         { path: "*", component: Error, name: '404' }
   ]
 })

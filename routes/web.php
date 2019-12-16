@@ -14,4 +14,5 @@
  
 
 // SPA
-Route::get('/{any?}', 'SinglePageController@index')->name('home');
+ 
+Route::get('{any}', function () { return view('app'); })->where('any','.*');
