@@ -29,9 +29,10 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {   
         $request->validate([
-            'contact_information' => 'required',
+            'name' => 'max:255',
+            'contact_information' => 'required|max:255',
             'date'  => 'required|date',
-            'start_time' => 'required|integer|between:9,17|unique:appointments,start_time,NULL,id,date,'.$request->date,
+            'start_time' => 'required|integer|max:255|between:9,18|unique:appointments,start_time,NULL,id,date,'.$request->date,
         ]);
         $appointment = new Appointment($request->all());
         if ($appointment->save()) {
@@ -64,6 +65,12 @@ class AppointmentController extends Controller
     public function update(Request $request, $id)
     {
         $appointment= Appointment::find($id);
+        $request->validate([
+            'name' => 'max:255',
+            'contact_information' => 'required|max:255',
+            'date'  => 'required|date',
+            'start_time' => 'required|integer|between:9,18|max:255',
+        ]);
         $appointment->fill($request->all());
         if ($appointment->save()) {
  
@@ -104,7 +111,8 @@ class AppointmentController extends Controller
                     ["name"=>  "14:00",  "value"=>  14],
                     ["name"=>  "15:00",  "value"=>  15],
                     ["name"=>  "16:00",  "value"=>  16],
-                    ["name"=>  "17:00",  "value"=>  17]];
+                    ["name"=>  "17:00",  "value"=>  17],
+                    ["name"=>  "18:00",  "value"=>  18]];
         $range_srt =  $range;
         $date = $request->input('date');
         $appointment = Appointment::where('date', $date)->pluck('start_time')->toArray();

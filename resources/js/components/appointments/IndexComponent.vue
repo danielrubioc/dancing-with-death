@@ -5,12 +5,14 @@
                 Appointment list
             </div>
             <div class="card-body text-center">
- 
+
                 <div class="text-right">
                     <a @click="$router.push('/')" class="btn btn-success" style="color:white">New Appointment</a>
                     <br> <br>
                 </div>
-
+                <div class="progress" v-if="isLoading" style="position: relative;">
+                    <div class="progress-bar progress-bar-striped indeterminate"></div>
+                </div>
                 <table class="table">
                     <thead>
                         <tr>
@@ -36,7 +38,7 @@
                     </tbody>
                 </table>
                 <div class="text-right">
-                <pagination class="text-right" v-if="data_laravel"  :data="data_laravel" :limit="limit" @pagination-change-page="getData"></pagination>
+                    <pagination class="text-right" v-if="data_laravel"  :data="data_laravel" :limit="limit" @pagination-change-page="getData"></pagination>
                 </div>    
             </div>
         </div>
@@ -46,7 +48,7 @@
 
 <script>
     import AppointmentService from '../../services/AppointmentService'
-
+    import { mapGetters, mapState, mapMutations } from 'vuex'
     export default {
         data() {
             return {
@@ -55,6 +57,9 @@
                 page: 1, 
             limit: 4, // limite para mostrar paginas - paginacion,
             }     
+        },
+        computed: {
+            ...mapGetters('loading', { isLoading: 'isLoading'}),
         },
         mounted() {
             this.getData();

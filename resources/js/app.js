@@ -4,14 +4,17 @@ window.Vue = require('vue');
 
 import {router} from './router'
 import VueRouter from 'vue-router'
-import moment from 'moment'
 import axios from 'axios';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
-
+import moment from 'moment-timezone'
+import Vuex from 'vuex';
+import store from './store';
+moment.tz.setDefault('UTC')
 Vue.prototype.moment = moment
 Vue.component('pagination', require('laravel-vue-pagination'));
 Vue.use(VueRouter)
+Vue.use(Vuex);
 Vue.use(VueSweetalert2);
 
 //main
@@ -19,12 +22,18 @@ Vue.component('main-component', require('./components/MainComponent.vue').defaul
 
 
 
-
+// interceptor config
+axios.interceptors.request.use(
+    config => {
+        store.dispatch('loading/initLoading'); //init loading
+        return config
+    },
+    error => Promise.reject(error)
+);
 // interceptor response
 axios.interceptors.response.use(
     (response) => {
-        //store.dispatch('loading/endLoading'); //termino loading en todas las solicitudes
-        
+        store.dispatch('loading/endLoading'); //termino loading en todas las solicitudes        
         if (response.status === 202) {
             Vue.swal({
                 title: "Appointment dance",
@@ -68,7 +77,6 @@ axios.interceptors.response.use(
                 confirmButtonColor: "#DD6B55",
             });
         }
-        //store.dispatch('snackbar/openSnack', { color: 'error', text: error.response.status +': '+error.response.data.message,show: true });
         return Promise.reject(error.response);
 }); 
 
@@ -76,5 +84,6 @@ axios.interceptors.response.use(
 
 const app = new Vue({
     el: '#app',
+    store,
     router
 });

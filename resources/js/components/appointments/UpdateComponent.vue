@@ -53,9 +53,17 @@
                                     <button type="submit" class="btn btn-success">Update appointment</button>
                                     <button type="button"  @click="$router.push('/appointments')" class="btn btn-info">List appointments</button>
                                 </div>
-                                <div align-center justify-end v-if="isLoading">
-                                     
-                                </div>
+                                <div v-if="isLoading">
+                                    <div class="spinner-grow" style="width: 2rem; height: 2rem;" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div> 
+                                    <div class="spinner-grow" style="width: 2rem; height: 2rem;" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div> 
+                                    <div class="spinner-grow" style="width: 2rem; height: 2rem;" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div> 
+                                </div>  
 
                               
                             </div>
@@ -71,7 +79,7 @@
     import Datepicker from 'vuejs-datepicker';
     import AppointmentService from '../../services/AppointmentService'
     import moment from 'moment'
-    
+    import { mapGetters, mapState, mapMutations } from 'vuex'
     export default {
         components: {
             Datepicker
@@ -94,10 +102,13 @@
                         {name: "14:00",  value: 14},
                         {name: "15:00",  value: 15},
                         {name: "16:00",  value: 16},
-                        {name: "17:00",  value: 17}]
+                        {name: "17:00",  value: 17},
+                        {name: "18:00",  value: 18}]
             }
         },
- 
+        computed: {
+            ...mapGetters('loading', { isLoading: 'isLoading'}),
+        },
         mounted() {
             this.getData( this.$route.params.id );
         },
@@ -108,14 +119,14 @@
             onChange(date) {
                 this.validated = false;
                 this.empty_times = "";
+                this.appointmentUpdate.start_time = false;
                 this.$nextTick(function () {
-                    let date =  moment(this.appointmentUpdate.date , 'YYYY.MM.DD').format('YYYY.MM.DD');
+                    let date =  moment(this.appointmentUpdate.date , 'YYYY.MM.DD').format('YYYY-MM-DD');
                     let params = '?date=' + date;
                     AppointmentService.getTimes(params).then(resp => {
                         this.times = resp.data;
                         if(this.times.length == 0) {
                            this.validated = true;
-                           this.appointmentUpdate.start_time = false;
                            this.empty_times = "sorry there are no hours available for the day";
                         }  
                     }); 
@@ -124,7 +135,7 @@
             getData( id ) {
                 AppointmentService.find(id).then(resp => {
                     this.appointmentUpdate = resp.data;
-                    this.appointmentUpdate.date =  moment(this.appointmentUpdate.date , 'YYYY.MM.DD').format('YYYY.MM.DD');
+                    this.appointmentUpdate.date =  moment(this.appointmentUpdate.date , 'YYYY.MM.DD').format('YYYY-MM-DD');
                 })
             },
     
@@ -148,7 +159,7 @@
 
             registerUpdate() {
                 this.isLoading  = true;
-                this.appointmentUpdate.date = moment(this.appointmentUpdate.date , 'YYYY.MM.DD').format('YYYY.MM.DD');
+                this.appointmentUpdate.date = moment(this.appointmentUpdate.date , 'YYYY.MM.DD').format('YYYY-MM-DD');
                 AppointmentService.updateRegister(this.appointmentUpdate.id, this.appointmentUpdate).then(resp => {
                     this.isLoading  = false;
                     if (resp.status == 200 || resp.status == 201) {
@@ -156,7 +167,7 @@
                         this.validated = true;
                         this.appointmentUpdate.start_time = false;
                     }
-                }); 
+                }) 
  
             },
 

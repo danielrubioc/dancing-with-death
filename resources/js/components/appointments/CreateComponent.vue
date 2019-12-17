@@ -50,10 +50,20 @@
                             <div class="text-right">
                                 <div v-if="!isLoading">
                                     <br>
-                                    <button type="submit" class="btn btn-success">Request dance</button>
                                     <button type="button"  @click="$router.push('/appointments')" class="btn btn-info">List appointments</button>
+                                    <button type="submit" class="btn btn-success">Request appointment</button>
                                 </div>
- 
+                                <div v-if="isLoading">
+                                    <div class="spinner-grow" style="width: 2rem; height: 2rem;" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div> 
+                                    <div class="spinner-grow" style="width: 2rem; height: 2rem;" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div> 
+                                    <div class="spinner-grow" style="width: 2rem; height: 2rem;" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div> 
+                                </div>  
                             </div>
                         </form>
                     </div>
@@ -67,9 +77,13 @@
     import Datepicker from 'vuejs-datepicker';
     import AppointmentService from '../../services/AppointmentService'
     import moment from 'moment'
+    import { mapGetters, mapState, mapMutations } from 'vuex'
     export default {
         components: {
             Datepicker
+        },
+        computed: {
+            ...mapGetters('loading', { isLoading: 'isLoading'}),
         },
         data() {
             return {
@@ -78,7 +92,6 @@
                 }, 
                 errors:[],
                 newAppointment: {},
-                isLoading: false,
                 empty_times: '',
                 validated: true,
                 times: []
@@ -87,24 +100,25 @@
  
         methods: {
             onChange(date) {
-                this.validated = false;
-                this.empty_times = "";
+                this.validated = true;
+                this.empty_times = ""; 
+                this.newAppointment.start_time = false;
                 this.$nextTick(function () {
-                    let date =  moment(this.newAppointment.date).format('YYYY-M-DD')
+                    let date =  moment(this.newAppointment.date).format('YYYY-MM-DD');
                     let params = '?date=' + date;
                     AppointmentService.getTimes(params).then(resp => {
                         this.times = resp.data;
-                       
+                        this.validated = false;
+                        this.empty_times = "";    
                         if(this.times.length == 0) {
                            this.validated = true;
-                           this.newAppointment.start_time = false;
                            this.empty_times = "sorry there are no hours available for the day";
                         }  
                     }); 
                 });
             },
             customFormatter(date) {
-                return moment(date).format('YYYY-M-DD');
+                return moment(date).format('YYYY-MM-DD');
             },
             checkForm: function (e) {
                 this.errors = [];
@@ -126,12 +140,10 @@
             },
 
             registerCreate() {
-       
-                this.newAppointment.date = moment(this.newAppointment.date).format('YYYY-M-DD');   
+                this.newAppointment.date =  moment(this.newAppointment.date).format('YYYY-MM-DD');
                 AppointmentService.createRegister(this.newAppointment).then(resp => {
                     this.newAppointment = {};
                 }); 
- 
             },
         }
     }
