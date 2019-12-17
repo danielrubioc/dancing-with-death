@@ -157,11 +157,10 @@
             },
 
             registerUpdate() {
-                this.isLoading  = true;
+ 
                 this.appointmentUpdate.date = moment(this.appointmentUpdate.date , 'YYYY.MM.DD').format('YYYY-MM-DD');
                 AppointmentService.updateRegister(this.appointmentUpdate.id, this.appointmentUpdate).then(resp => {
-                    this.isLoading  = false;
-                    if (resp.status == 200 || resp.status == 201) {
+                     if (resp.status == 200 || resp.status == 201) {
                         this.getData( this.$route.params.id );
                         this.validated = true;
                         this.appointmentUpdate.start_time = false;
