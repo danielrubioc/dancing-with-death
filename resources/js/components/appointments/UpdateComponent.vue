@@ -92,7 +92,6 @@
                 errors:[],
                 appointmentUpdate: {},
                 validated: true,
-                isLoading: false,
                 empty_times: '',
                 times:  [{name: "9:00",  value: 9},
                         {name: "10:00",  value: 10},

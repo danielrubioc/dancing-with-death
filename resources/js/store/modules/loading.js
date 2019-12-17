@@ -27,11 +27,9 @@ const actions = {
 const mutations = {
     [LOADING_ON] (state) {
         state.isLoading = true;
-        console.log("init");
     },
     [LOADING_OFF] (state) {
         state.isLoading = false;
-        console.log("end");
     },
 }
 
